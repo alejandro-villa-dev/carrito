@@ -5,6 +5,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 
 // Importar servicios y modelos
 import { ComprasService } from '../../core/services/compras.service';
+import { MonedaService } from '../../core/services/moneda.service';
 import { SesionCompra } from '../../core/models/sesion-compra.model';
 
 @Component({
@@ -34,11 +35,15 @@ export class TabHistorialComponent implements OnInit {
   // Control de acordeón - ID de sesión expandida
   sesionExpandida: string | null = null;
 
+  // Búsqueda en el historial (lugar o producto)
+  busqueda: string = '';
+
   constructor(
     private router: Router,
     private comprasService: ComprasService,
     private alertController: AlertController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private monedaService: MonedaService
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -106,26 +111,61 @@ export class TabHistorialComponent implements OnInit {
   }
 
   /**
-   * Calcular días desde la compra
+   * Días de calendario desde la compra (0 = hoy, 1 = ayer)
    */
   diasDesdeCompra(fecha: Date): number {
-    const ahora = new Date();
-    const fechaCompra = new Date(fecha);
-    const diferencia = ahora.getTime() - fechaCompra.getTime();
-    return Math.floor(diferencia / (1000 * 60 * 60 * 24));
+    const inicioDia = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+    const diferencia = inicioDia(new Date()) - inicioDia(new Date(fecha));
+    return Math.round(diferencia / (1000 * 60 * 60 * 24));
   }
 
   /**
-   * Formatear fecha para mostrar
+   * Formatear fecha para mostrar (según el país del usuario)
    */
   formatearFecha(fecha: Date): string {
-    const fechaObj = new Date(fecha);
-    const opciones: Intl.DateTimeFormatOptions = {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
+    return this.monedaService.formatearFecha(fecha);
+  }
+
+  /**
+   * Compras completadas filtradas por la búsqueda (lugar o nombre de producto)
+   */
+  get comprasFiltradas(): SesionCompra[] {
+    const termino = this.busqueda.trim().toLowerCase();
+    if (!termino) return this.sesionesCompletadas;
+
+    return this.sesionesCompletadas.filter(sesion =>
+      sesion.nombreSupermercado.toLowerCase().includes(termino) ||
+      sesion.productos.some(producto => producto.nombre.toLowerCase().includes(termino))
+    );
+  }
+
+  /**
+   * Resumen del mes en curso: cuántas compras y cuánto se gastó
+   */
+  get resumenMes(): { compras: number; total: number } {
+    const ahora = new Date();
+    const delMes = this.sesionesCompletadas.filter(sesion => {
+      const fecha = new Date(sesion.fechaInicio);
+      return fecha.getMonth() === ahora.getMonth() && fecha.getFullYear() === ahora.getFullYear();
+    });
+
+    return {
+      compras: delMes.length,
+      total: delMes.reduce((suma, sesion) => suma + (sesion.totales?.total || 0), 0)
     };
-    return fechaObj.toLocaleDateString('es-CL', opciones);
+  }
+
+  get nombreMesActual(): string {
+    const nombre = new Date().toLocaleDateString(this.monedaService.locale, { month: 'long', year: 'numeric' });
+    return nombre.charAt(0).toUpperCase() + nombre.slice(1);
+  }
+
+  get hayHistorial(): boolean {
+    return this.sesionesCompletadas.length + this.sesionesBorrador.length + this.sesionesGuardadas.length > 0;
+  }
+
+  irANuevaCompra(): void {
+    void this.router.navigateByUrl('/pantalla-principal/nueva-compra');
   }
 
   /**
@@ -148,7 +188,7 @@ export class TabHistorialComponent implements OnInit {
       message,
       duration: 2000,
       color,
-      position: 'bottom'
+      position: 'top'
     });
     await toast.present();
   }
@@ -168,49 +208,25 @@ export class TabHistorialComponent implements OnInit {
   }
 
   /**
-   * Editar/Completar un borrador
-   * Permite al usuario cargar el borrador para editarlo y completar precios/cantidades
+   * Continuar un borrador: lo activa y abre la pantalla de compra para completar precios y cantidades
    */
   async editarBorrador(sesionId: string): Promise<void> {
     try {
-      // Obtener la sesión borrador
       const borrador = this.sesionesBorrador.find(s => s.id === sesionId);
       if (!borrador) {
         await this.mostrarToast('No se encontró la lista', 'danger');
         return;
       }
 
-      // Confirmar acción
-      const alert = await this.alertController.create({
-        header: '📋 Completar tu Lista',
-        message: `Abre la lista de "${borrador.nombreSupermercado}" para:\n\n✅ Revisar los ${borrador.productos.length} productos\n✅ Agregar precios\n✅ Ajustar cantidades`,
-        buttons: [
-          {
-            text: 'Cancelar',
-            role: 'cancel'
-          },
-          {
-            text: 'Abrir Lista',
-            handler: async () => {
-              // Activar el borrador (cambiar estado de BORRADOR a ACTIVA)
-              const activado = await this.comprasService.activarBorrador(sesionId);
+      const activado = await this.comprasService.activarBorrador(sesionId);
 
-              if (activado) {
-                await this.mostrarToast('Lista abierta. Completa los detalles', 'success');
-                // Redirigir a nueva compra donde se pueden editar los productos
-                this.router.navigate(['/pantalla-principal/nueva-compra']);
-              } else {
-                await this.mostrarToast('Error al abrir la lista', 'danger');
-              }
-            }
-          }
-        ]
-      });
-
-      await alert.present();
-
+      if (activado) {
+        await this.router.navigateByUrl('/pantalla-principal/nueva-compra');
+      } else {
+        await this.mostrarToast('No se pudo abrir la lista. ¿Ya tienes otra compra en curso?', 'danger');
+      }
     } catch (error) {
-      console.error('Error al editar borrador:', error);
+      console.error('Error al abrir el borrador:', error);
       await this.mostrarToast('Error al abrir la lista', 'danger');
     }
   }

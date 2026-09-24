@@ -9,8 +9,9 @@
  */
 
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { trigger, state, style, transition, animate } from '@angular/animations'; // ✅ IMPORTAR ANIMACIONES
 
 // Importar servicios usando rutas relativas (hasta que funcionen los paths @core)
@@ -56,6 +57,7 @@ export class PantallaPrincipalComponent implements OnInit, OnDestroy {
   // Datos del usuario y saludo
   usuario: Usuario | null = null;
   saludo: string = '';
+  momentoSaludo: string = '';
   fechaActual: string = '';
   horaActual: string = '';
 
@@ -198,6 +200,13 @@ export class PantallaPrincipalComponent implements OnInit, OnDestroy {
       });
       this.subscriptions.add(sub);
 
+      // Mantener el tab resaltado según la ruta (también cuando se navega desde código)
+      this.sincronizarTabConRuta(this.router.url);
+      const rutaSub = this.router.events
+        .pipe(filter((evento): evento is NavigationEnd => evento instanceof NavigationEnd))
+        .subscribe((evento) => this.sincronizarTabConRuta(evento.urlAfterRedirects));
+      this.subscriptions.add(rutaSub);
+
       // ✅ PASO 8: Registrar actividad del usuario
       console.log('📊 Registrando actividad...');
       await this.usuarioService.registrarActividad();
@@ -246,6 +255,7 @@ export class PantallaPrincipalComponent implements OnInit, OnDestroy {
       saludoBase = 'Buenas noches';
     }
 
+    this.momentoSaludo = saludoBase;
     this.saludo = `${saludoBase}, ${this.usuario.nombre}`;
     console.log('👋 Saludo generado:', this.saludo);
   }
@@ -402,9 +412,26 @@ export class PantallaPrincipalComponent implements OnInit, OnDestroy {
    * Navegar a sesión de compra activa
    */
   async irACompraActiva(): Promise<void> {
-    console.log('🛒 Navegando a compra activa...');
     if (this.sesionActiva) {
-      await this.router.navigate(['/compra-activa']);
+      await this.router.navigateByUrl('/pantalla-principal/nueva-compra');
+    }
+  }
+
+  /**
+   * Inicial del usuario para el avatar del encabezado
+   */
+  get inicialUsuario(): string {
+    return (this.usuario?.nombre?.trim().charAt(0) || '?').toUpperCase();
+  }
+
+  /**
+   * Resaltar en la barra inferior el tab que corresponde a la ruta actual
+   */
+  private sincronizarTabConRuta(url: string): void {
+    const tab = ['historial', 'nueva-compra', 'configuraciones'].find(t => url.includes(`/${t}`));
+    if (tab && tab !== this.tabActivo) {
+      this.tabActivo = tab;
+      this.cdr.detectChanges();
     }
   }
 
@@ -435,50 +462,5 @@ export class PantallaPrincipalComponent implements OnInit, OnDestroy {
   onAnuncioVisualizado(): void {
     console.log('👁️ Anuncio visualizado');
     this.monetizacionService.incrementarAnunciosVisualizados();
-  }
-
-  /**
-   * Obtener texto del tab continuar compra
-   */
-  get textoTabContinuar(): string {
-    if (!this.sesionActiva) return 'Continuar Compra';
-
-    const productos = this.sesionActiva.productos.length;
-    const total = this.sesionActiva.totales.total;
-
-    return `Continuar (${productos} productos - $${total.toLocaleString()})`;
-  }
-
-  /**
-   * Obtener información de moneda del usuario
-   */
-  get simboloMoneda(): string {
-    if (!this.usuario) return '$';
-
-    // Obtener símbolo de moneda según el país
-    const simbolosPorPais: { [key: string]: string } = {
-      'CL': '$',
-      'AR': '$',
-      'MX': '$',
-      'CO': '$',
-      'PE': 'S/',
-      'US': 'US$',
-      'ES': '€',
-      'BO': 'Bs',
-      'CR': '₡',
-      'CU': '$',
-      'EC': 'US$',
-      'SV': 'US$',
-      'GT': 'Q',
-      'HN': 'L',
-      'NI': 'C$',
-      'PA': 'B/.',
-      'PY': '₲',
-      'DO': 'RD$',
-      'UY': '$U',
-      'VE': 'Bs.'
-    };
-
-    return simbolosPorPais[this.usuario.pais] || '$';
   }
 }

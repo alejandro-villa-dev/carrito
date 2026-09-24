@@ -18,7 +18,6 @@ export class TabConfiguracionesComponent implements OnInit {
   nombreUsuario: string = '';
   paisActual: Pais | null = null;
   paisesDisponibles: Pais[] = [];
-  mostrarBeneficios: boolean = false; // Colapsable
 
   constructor(
     private configuracionService: ConfiguracionService,

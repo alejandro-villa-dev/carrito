@@ -1,757 +1,522 @@
 /**
- * Estilos para Tab Nueva Compra
- * Optimizado para dispositivos móviles
+ * Estilos Tab Nueva Compra
+ * Solo variables de tema (--app-*, --ion-color-*): funciona con todos los temas.
  *
  * @author DemWolf
- * @version 1.0
+ * @version 2.0 - REDISEÑO SIMPLIFICADO
  */
 
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+}
+
 .tab-nueva-compra-content {
-  min-height: 100%;
-  height: 100%;
-  overflow-y: auto;
-  padding: 16px;
-  padding-bottom: 100px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 16px 16px;
   background: var(--ion-background-color);
 
-  // Card límite alcanzado
-  .card-limite {
-    margin: 16px;
-
-    .limite-content {
-      display: flex;
-      align-items: flex-start;
-      gap: 16px;
-
-      ion-icon {
-        flex-shrink: 0;
-      }
-
-      h3 {
-        margin: 0 0 8px 0;
-        font-size: 16px;
-        font-weight: 600;
-      }
-
-      p {
-        margin: 0 0 6px 0;
-        font-size: 14px;
-        line-height: 1.5;
-
-        &.limite-info {
-          margin-top: 8px;
-          font-size: 13px;
-          opacity: 0.9;
-          font-weight: 500;
-
-          &.small {
-            margin-top: 4px;
-            font-size: 12px;
-          }
-        }
-      }
-    }
-  }
-
-  // Card información sobre límite mensual
-  .card-info-limite {
-    margin: 8px 16px 12px 16px;
-    background: linear-gradient(135deg, rgba(33, 150, 243, 0.08), rgba(66, 165, 245, 0.08));
-    border-left: 4px solid var(--ion-color-primary);
-    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.12);
-
-    ion-card-content {
-      padding: 10px 12px;
-    }
-
-    .limite-info-content {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      margin: 0;
-
-      ion-icon {
-        flex-shrink: 0;
-        font-size: 20px;
-        margin-top: 1px;
-      }
-
-      .limite-info-text {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-
-        p {
-          margin: 0;
-          font-size: 12px;
-          font-weight: 500;
-          line-height: 1.4;
-
-          strong {
-            color: var(--ion-color-primary);
-            font-weight: 700;
-          }
-
-          &.limite-description {
-            margin-top: 3px;
-            font-size: 11px;
-            opacity: 0.85;
-            font-weight: normal;
-            font-style: italic;
-          }
-        }
-      }
-    }
-  }
-
-  // Card información de compra
-  .card-info-compra {
-    margin: 0 16px 16px 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-    ion-card-header {
-      ion-card-title {
-        font-size: 18px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      ion-card-subtitle {
-        margin-top: 4px;
-        font-size: 13px;
-      }
-    }
-
-    ion-item {
-      --padding-start: 0;
-      --inner-padding-end: 0;
-      margin-bottom: 16px;
-
-      ion-label {
-        margin-bottom: 8px;
-        font-weight: 600;
-        font-size: 14px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-
-        ion-icon {
-          font-size: 18px;
-        }
-      }
-
-      ion-input {
-        --padding-start: 12px;
-        --padding-end: 12px;
-        border: 1px solid var(--ion-border-color);
-        border-radius: 8px;
-        margin-top: 4px;
-        font-size: 16px;
-      }
-    }
-
-    .btn-iniciar-compra {
-      margin-top: 8px;
-      height: 48px;
-      font-weight: 600;
-    }
-  }
-
-  // Card sesión activa
-  .card-sesion-activa {
-    margin: 0 16px 16px 16px;
-    --background: var(--ion-color-success-tint, #66BB6A) !important;
-    --color: white !important;
-
-    .sesion-info {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 12px;
-
-      ion-icon {
-        flex-shrink: 0;
-        color: white !important;
-      }
-
-      h3 {
-        margin: 0 0 4px 0;
-        font-size: 16px;
-        font-weight: 600;
-        color: white !important;
-      }
-
-      p {
-        margin: 0;
-        font-size: 13px;
-        color: rgba(255, 255, 255, 0.95) !important;
-        font-weight: 500;
-      }
-    }
-
-    // Botones de acción en la sesión activa
-    .sesion-acciones {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
-
-      ion-button {
-        --background: rgba(255, 255, 255, 0.2) !important;
-        --color: white !important;
-        --border-radius: 8px;
-        margin: 0;
-
-        &:hover {
-          --background: rgba(255, 255, 255, 0.3) !important;
-        }
-      }
-    }
-  }
-
-  // Contador header
-  .contador-header {
-    padding: 12px 16px;
-    display: flex;
-    justify-content: center;
-
-    ion-chip {
-      font-weight: 600;
-    }
-  }
-
-  // Card formulario
-  .card-formulario {
-    margin: 0 16px 16px 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-    ion-card-header {
-      padding-bottom: 8px;
-
-      ion-card-title {
-        font-size: 18px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-    }
-
-    ion-card-content {
-      padding-top: 16px;
-    }
-
-    ion-item {
-      --padding-start: 0;
-      --inner-padding-end: 0;
-
-      ion-label[position="stacked"] {
-        margin-bottom: 8px;
-        font-weight: 600;
-        font-size: 14px;
-      }
-
-      ion-input {
-        --padding-start: 12px;
-        --padding-end: 12px;
-        border: 1px solid var(--ion-color-medium);
-        border-radius: 8px;
-        margin-top: 4px;
-        font-size: 16px;
-      }
-    }
-  }
-
-  // Grid cantidad/precio
-  .grid-cantidad-precio {
-    padding: 0;
-    margin-top: 16px;
-
-    ion-col {
-      padding: 0 4px;
-
-      &:first-child {
-        padding-left: 0;
-      }
-
-      &:last-child {
-        padding-right: 0;
-      }
-    }
-  }
-
-  // Item subtotal
-  .item-subtotal {
-    margin-top: 12px;
-    padding: 12px;
-    background: var(--ion-color-light-tint);
-    border-radius: 8px;
-
-    h3 {
-      margin: 0;
-      font-size: 14px;
-      color: var(--ion-color-medium);
-    }
-
-    ion-note {
-      font-size: 20px;
-    }
-  }
-
-  // Botón agregar producto
-  .btn-agregar-producto {
-    margin-top: 20px;
-    height: 48px;
-    font-weight: 600;
-    text-transform: none;
-  }
-
-  // Lista de productos
-  .lista-productos {
-    margin: 16px 0 120px 0;
-
-    ion-list-header {
-      padding: 8px 16px;
-
-      h2 {
-        font-size: 16px;
-        font-weight: 700;
-        color: var(--ion-color-dark);
-      }
-    }
-
-    ion-list {
-      background: transparent;
-      padding: 8px 0;
-    }
-
-    .item-producto {
-      --background: var(--ion-item-background);
-      --background-hover: var(--ion-color-light);
-      margin: 0;
-      border-radius: 14px 14px 0 0;
-      padding: 14px 16px;
-      transition: background-color 0.3s ease;
-
-      ion-avatar {
-        width: 60px;
-        height: 60px;
-        border-radius: 8px;
-      }
-
-      ion-label {
-        margin: 0;
-        padding-left: 8px;
-
-        h2 {
-          font-size: 17px;
-          font-weight: 700;
-          margin-bottom: 6px;
-          color: var(--ion-text-color);
-          letter-spacing: 0.3px;
-        }
-
-        p {
-          font-size: 13px;
-          color: var(--ion-color-medium);
-          margin: 0;
-
-          .cantidad {
-            font-weight: 700;
-            margin-right: 8px;
-            color: var(--ion-color-primary);
-            background: rgba(var(--ion-color-primary-rgb), 0.1);
-            padding: 2px 6px;
-            border-radius: 4px;
-            display: inline-block;
-          }
-
-          .precio {
-            font-weight: 600;
-            color: var(--ion-color-primary);
-            background: rgba(var(--ion-color-primary-rgb), 0.08);
-            padding: 2px 8px;
-            border-radius: 4px;
-            display: inline-block;
-          }
-        }
-      }
-
-      ion-note {
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--ion-color-primary);
-        text-align: right;
-      }
-
-      // Estilo para producto incompleto
-      &.producto-incompleto {
-        --background: linear-gradient(135deg, rgba(var(--ion-color-warning-rgb), 0.08), rgba(var(--ion-color-warning-rgb), 0.04));
-        border-left: 4px solid var(--ion-color-warning);
-
-        ion-label h2 {
-          color: var(--ion-color-warning);
-        }
-
-        .precio {
-          background: rgba(var(--ion-color-warning-rgb), 0.15) !important;
-          color: var(--ion-color-warning) !important;
-        }
-
-        ion-note {
-          color: var(--ion-color-medium);
-        }
-      }
-    }
-
-    // Contenedor de producto con botones
-    .producto-card {
-      margin: 0 16px 16px 16px;
-      background: var(--ion-background-color);
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s ease;
-
-      &:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      }
-
-      .botones-producto {
-        display: flex;
-        gap: 8px;
-        padding: 8px 12px;
-        background: linear-gradient(135deg, rgba(var(--ion-color-primary-rgb), 0.05), rgba(var(--ion-color-danger-rgb), 0.05));
-        border-top: 1px solid var(--ion-border-color, rgba(0, 0, 0, 0.08));
-        justify-content: flex-end;
-
-        ion-button {
-          --padding-start: 10px;
-          --padding-end: 10px;
-          --padding-top: 6px;
-          --padding-bottom: 6px;
-          height: 32px;
-          font-size: 12px;
-          font-weight: 600;
-          letter-spacing: 0.3px;
-          border-radius: 6px;
-          text-transform: uppercase;
-          transition: all 0.3s ease;
-
-          ion-icon {
-            font-size: 16px;
-            margin-right: 4px;
-          }
-
-          &.btn-editar {
-            --color: var(--ion-color-primary);
-            --border-color: var(--ion-color-primary);
-            background: linear-gradient(135deg, rgba(var(--ion-color-primary-rgb), 0.12), rgba(var(--ion-color-primary-rgb), 0.06));
-
-            &:hover {
-              background: linear-gradient(135deg, rgba(var(--ion-color-primary-rgb), 0.2), rgba(var(--ion-color-primary-rgb), 0.12));
-              box-shadow: 0 2px 8px rgba(var(--ion-color-primary-rgb), 0.3);
-            }
-          }
-
-          &.btn-eliminar {
-            --color: var(--ion-color-danger);
-            --border-color: var(--ion-color-danger);
-            background: linear-gradient(135deg, rgba(var(--ion-color-danger-rgb), 0.12), rgba(var(--ion-color-danger-rgb), 0.06));
-
-            &:hover {
-              background: linear-gradient(135deg, rgba(var(--ion-color-danger-rgb), 0.2), rgba(var(--ion-color-danger-rgb), 0.12));
-              box-shadow: 0 2px 8px rgba(var(--ion-color-danger-rgb), 0.3);
-            }
-          }
-        }
-      }
-    }
-
-    ion-item-option {
-      ion-icon {
-        font-size: 24px;
-      }
-    }
-  }
-
-  // Empty state
-  .empty-state {
+  // ---------- Bloques (tarjetas) ----------
+  .bloque {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 30px 24px;
-    text-align: center;
-    flex: 1;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 16px;
+    background: var(--app-card-background);
+    border: 1px solid var(--app-border-color);
 
-    ion-icon {
-      margin-bottom: 12px;
-      width: 60px;
-      height: 60px;
+    // La app usa modo iOS (sin "outline" nativo): el borde se dibuja en el propio ion-input
+    ion-input {
+      --padding-start: 14px;
+      --padding-end: 14px;
+      --padding-top: 8px;
+      --padding-bottom: 8px;
+      --highlight-color-focused: transparent;
+      min-height: 58px;
+      font-size: 16px;
+      border: 1px solid var(--app-border-color-strong);
+      border-radius: 12px;
+      // Recorta el fondo interno del campo al radio: sin esto asoman esquinas cuadradas
+      overflow: hidden;
+      --background: var(--app-input-background) !important;
+      background: var(--app-input-background);
+      transition: box-shadow 0.15s ease, border-color 0.15s ease;
+
+      &.has-focus {
+        border-color: var(--ion-color-primary);
+        box-shadow: 0 0 0 1px var(--ion-color-primary);
+      }
+
+      // El anillo de foco del <input> interno sobra: ya se resalta todo el campo
+      ::ng-deep input,
+      ::ng-deep input:focus {
+        outline: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        border: none !important;
+      }
+    }
+  }
+
+  .bloque-titulo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px 12px;
+
+    h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--app-text-primary);
     }
 
     p {
+      margin: 2px 0 0;
       font-size: 14px;
-      margin: 4px 0;
-    }
-
-    small {
-      font-size: 12px;
+      color: var(--app-text-secondary);
     }
   }
 
-  // Espaciador para footer
-  .spacer-footer {
-    height: 200px;
-  }
-}
+  .chip-cupo {
+    flex-shrink: 0;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--app-text-secondary);
+    background: var(--app-overlay-bg-strong);
 
-.modal-editar-producto {
-  --width: min(92vw, 420px);
-  --height: min(80vh, 520px);
-  --max-height: 90vh;
-  --border-radius: 16px;
-
-  ion-toolbar {
-    --background: var(--ion-color-primary) !important;
-    --color: var(--ion-color-primary-contrast) !important;
+    &.ultimo {
+      color: var(--ion-color-warning-contrast);
+      background: var(--ion-color-warning);
+    }
   }
 
-  ion-content {
-    --background: var(--app-modal-background) !important;
-    --color: var(--app-text-primary) !important;
+  .contador {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--app-text-secondary);
+
+    &.lleno {
+      color: var(--ion-color-danger);
+    }
   }
 
-  .campo-edicion {
+  // ---------- Avisos ----------
+  .aviso {
     display: flex;
-    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--app-text-primary);
+    background: var(--app-overlay-bg-strong);
+    border-left: 4px solid var(--ion-color-medium);
+
+    ion-icon {
+      flex-shrink: 0;
+      font-size: 20px;
+      margin-top: 1px;
+    }
+
+    strong {
+      font-size: 14px;
+    }
+
+    p {
+      margin: 2px 0 0;
+    }
+
+    &.aviso-limite {
+      border-left-color: var(--ion-color-warning);
+
+      ion-icon {
+        color: var(--ion-color-warning);
+      }
+    }
+
+    &.aviso-vigencia {
+      border-left-color: var(--ion-color-primary);
+
+      ion-icon {
+        color: var(--ion-color-primary);
+      }
+    }
+  }
+
+  // ---------- Lugares recientes ----------
+  .chips-recientes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: -4px;
+  }
+
+  .chip-lugar {
+    display: inline-flex;
+    align-items: center;
     gap: 6px;
-    margin-bottom: 16px;
+    max-width: 100%;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--app-border-color-strong);
+    background: transparent;
+    color: var(--app-text-primary);
+    font-size: 13px;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
-    ion-label {
-      color: var(--app-text-primary) !important;
-      font-size: 14px;
-      font-weight: 700;
+    ion-icon {
+      flex-shrink: 0;
+      color: var(--ion-color-primary);
     }
 
-    ion-input {
-      --background: var(--app-input-background) !important;
-      --color: var(--app-text-primary) !important;
-      --placeholder-color: var(--app-text-tertiary) !important;
-      --border-color: var(--app-border-color-strong) !important;
+    &:active {
+      background: var(--app-overlay-bg-strong);
     }
   }
 
-  .acciones-edicion {
+  // ---------- Botones ----------
+  .btn-principal {
+    margin: 4px 0 0;
+    font-weight: 700;
+  }
+
+  // Botón de texto discreto (acciones secundarias)
+  .btn-texto {
+    align-self: center;
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    color: var(--app-text-secondary);
+    font-size: 14px;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  // Botón de icono (menú, borrar)
+  .btn-icono {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
     display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 24px;
-  }
-}
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--app-text-secondary);
+    cursor: pointer;
 
-.aviso-vigencia-temporal {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin: 0 12px 12px;
-  padding: 12px 14px;
-  border: 2px solid var(--ion-color-warning);
-  border-radius: 10px;
-  background: rgba(var(--ion-color-warning-rgb), 0.12);
-  color: var(--app-text-primary);
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.4;
+    ion-icon {
+      font-size: 20px;
+    }
 
-  ion-icon {
-    flex: 0 0 auto;
-    margin-top: 1px;
-    color: var(--ion-color-warning);
-    font-size: 20px;
-  }
-}
-
-// Footer con total
-.footer-total {
-  --background: white;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-
-  ion-toolbar {
-    --background: white;
-    --padding-top: 16px;
-    --padding-bottom: 16px;
-    --padding-start: 16px;
-    --padding-end: 16px;
+    &:active {
+      background: var(--app-overlay-bg-strong);
+    }
   }
 
-  .total-container {
-    margin-bottom: 16px;
+  // ---------- Cabecera de la compra en curso ----------
+  .sesion-cabecera {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 8px 12px 16px;
+    border-radius: 16px;
+    background: var(--app-card-background);
+    border: 1px solid var(--app-border-color);
 
-    .total-label {
-      text-align: center;
+    .sesion-icono {
+      flex-shrink: 0;
+      font-size: 26px;
+      color: var(--ion-color-success);
+    }
 
-      small {
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+    .sesion-texto {
+      flex: 1;
+      min-width: 0;
+
+      h2 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--app-text-primary);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
-      h1 {
-        margin: 4px 0;
-        font-size: 32px;
-        font-weight: 800;
+      p {
+        margin: 2px 0 0;
+        font-size: 13px;
+        color: var(--app-text-secondary);
       }
     }
   }
 
-  .botones-accion {
+  // ---------- Presupuesto ----------
+  .presupuesto {
+    padding: 12px 16px;
+    border-radius: 16px;
+    background: var(--app-card-background);
+    border: 1px solid var(--app-border-color);
+
+    .presupuesto-fila {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .presupuesto-meta {
+      font-size: 13px;
+      color: var(--app-text-secondary);
+    }
+
+    .presupuesto-saldo {
+      font-size: 16px;
+
+      &.presupuesto-verde { color: var(--ion-color-success); }
+      &.presupuesto-naranja { color: var(--ion-color-warning); }
+      &.presupuesto-rojo { color: var(--ion-color-danger); }
+    }
+
+    .progress-bar {
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      background: var(--app-overlay-bg-strong);
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+
+      &.presupuesto-verde { background: var(--ion-color-success); }
+      &.presupuesto-naranja { background: var(--ion-color-warning); }
+      &.presupuesto-rojo { background: var(--ion-color-danger); }
+    }
+  }
+
+  // ---------- Formulario de producto ----------
+  .fila-cantidad-precio {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 12px;
+  }
+
+  .ayuda {
+    margin: 0;
+    font-size: 12px;
+    color: var(--app-text-secondary);
+
+    &.ayuda-limite {
+      color: var(--ion-color-danger);
+    }
+  }
+
+  // ---------- Lista de productos ----------
+  .lista-productos {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
+  }
 
-    ion-button {
-      height: 52px;
-      font-size: 16px;
-      font-weight: 700;
-      text-transform: none;
+  .lista-titulo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 4px 12px;
+    padding: 4px 4px 0;
+
+    h3 {
       margin: 0;
-    }
-  }
-}
-
-// Modo oscuro
-@media (prefers-color-scheme: dark) {
-  .content-nueva-compra {
-    --background: var(--ion-background-color);
-
-    .card-formulario {
-      background: var(--ion-color-step-50);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--app-text-primary);
     }
 
-    .item-producto {
-      --background: var(--ion-color-step-50) !important;
+    span {
+      font-size: 12px;
+      color: var(--app-text-secondary);
     }
   }
 
-  .footer-total {
-    --background: var(--ion-color-step-50);
+  .producto-fila {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 4px 10px 14px;
+    border-radius: 14px;
+    background: var(--app-card-background);
+    border: 1px solid var(--app-border-color);
+    cursor: pointer;
 
-    ion-toolbar {
-      --background: var(--ion-color-step-50);
-    }
-  }
-
-  // ✅ ESTILOS PARA CARD DE PRESUPUESTO
-  .card-presupuesto {
-    margin: 0 16px 16px 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-    ion-card-header {
-      ion-card-title {
-        font-size: 18px;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-
-        ion-icon {
-          font-size: 20px;
-        }
-      }
+    &:active {
+      background: var(--app-overlay-bg-strong);
     }
 
-    .presupuesto-info {
+    &.incompleto {
+      border-left: 4px solid var(--ion-color-warning);
+    }
+
+    .producto-info {
+      flex: 1;
+      min-width: 0;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 2px;
+    }
 
-      .presupuesto-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 8px 12px;
-        border-radius: 8px;
-        background: var(--ion-color-light);
+    .producto-nombre {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--app-text-primary);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
 
-        .label {
-          font-size: 14px;
-          color: var(--ion-text-color-step-600);
-          font-weight: 500;
-        }
+    .producto-detalle {
+      font-size: 13px;
+      color: var(--app-text-secondary);
+    }
 
-        .valor {
-          font-size: 16px;
-          font-weight: 600;
-          color: var(--ion-text-color);
-        }
+    .falta {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--ion-color-warning);
+      font-weight: 600;
 
-        &.diferencia-item {
-          background: rgba(0, 0, 0, 0.05);
-
-          .valor-diferencia {
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 17px;
-
-            // Colores dinámicos
-            &.presupuesto-verde {
-              background: rgba(76, 175, 80, 0.1);
-              color: #4caf50;
-            }
-
-            &.presupuesto-naranja {
-              background: rgba(255, 152, 0, 0.1);
-              color: #ff9800;
-            }
-
-            &.presupuesto-rojo {
-              background: rgba(244, 67, 54, 0.1);
-              color: #f44336;
-            }
-          }
-        }
-      }
-
-      .progress-container {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-
-        .progress-bar {
-          width: 100%;
-          height: 8px;
-          background: var(--ion-color-light);
-          border-radius: 4px;
-          overflow: hidden;
-
-          .progress-fill {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.3s ease;
-
-            &.presupuesto-verde {
-              background: linear-gradient(90deg, #4caf50, #66bb6a);
-            }
-
-            &.presupuesto-naranja {
-              background: linear-gradient(90deg, #ff9800, #ffb74d);
-            }
-
-            &.presupuesto-rojo {
-              background: linear-gradient(90deg, #f44336, #ef5350);
-            }
-          }
-        }
-
-        .progress-text {
-          font-size: 12px;
-          color: var(--ion-text-color-step-600);
-          text-align: right;
-        }
+      ion-icon {
+        font-size: 15px;
       }
     }
+
+    .producto-total {
+      flex-shrink: 0;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ion-color-primary);
+
+      &.vacio {
+        color: var(--app-text-secondary);
+      }
+    }
+
+    .btn-borrar:active {
+      color: var(--ion-color-danger);
+    }
   }
+
+  // ---------- Estado vacío ----------
+  .vacio-estado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 24px 16px;
+    text-align: center;
+    color: var(--app-text-secondary);
+
+    ion-icon {
+      font-size: 40px;
+    }
+
+    p {
+      margin: 0;
+      font-size: 14px;
+    }
+  }
+
+  // ---------- Total + Guardar (fijo sobre la barra de navegación) ----------
+  .footer-total {
+    position: sticky;
+    // .tabs-content ya reserva el alto de la barra como padding: bottom 0 = justo encima de ella
+    bottom: 0;
+    z-index: 10;
+    margin: auto -16px -16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 16px;
+    background: var(--app-card-background);
+    border-top: 1px solid var(--app-border-color);
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+
+    .total-container {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+      min-width: 0;
+    }
+
+    .total-etiqueta {
+      font-size: 12px;
+      color: var(--app-text-secondary);
+    }
+
+    .total-monto {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--ion-color-primary);
+      white-space: nowrap;
+    }
+
+    .btn-guardar-lista {
+      flex-shrink: 0;
+      margin: 0;
+      font-weight: 700;
+    }
+  }
+}
+
+// ---------- Modal de edición ----------
+.campo-edicion {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+
+  ion-label {
+    color: var(--app-text-primary) !important;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  ion-input {
+    --background: var(--app-input-background) !important;
+    --color: var(--app-text-primary) !important;
+    --placeholder-color: var(--app-text-secondary) !important;
+    --border-color: var(--app-border-color-strong) !important;
+    --border-radius: 12px;
+    --padding-start: 14px;
+    --padding-end: 14px;
+    border: 1px solid var(--app-border-color-strong);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+}
+
+.acciones-edicion {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
 }

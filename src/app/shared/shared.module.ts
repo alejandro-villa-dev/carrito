@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 
 import { DonacionesModalComponent } from './components/donaciones-modal/donaciones-modal.component';
 import { TabBarraPrincipalComponent } from './components/tab-barra-principal/tab-barra-principal.component';
+import { MonedaPipe } from './pipes/moneda.pipe';
 
 const COMPONENTS = [
   DonacionesModalComponent,
@@ -13,7 +14,8 @@ const COMPONENTS = [
 
 @NgModule({
   declarations: [
-    ...COMPONENTS
+    ...COMPONENTS,
+    MonedaPipe
   ],
   imports: [
     CommonModule,
@@ -21,7 +23,8 @@ const COMPONENTS = [
     FormsModule
   ],
   exports: [
-    ...COMPONENTS
+    ...COMPONENTS,
+    MonedaPipe
   ]
 })
 export class SharedModule { }

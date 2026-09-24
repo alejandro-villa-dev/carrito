@@ -311,6 +311,11 @@ ion-alert {
   --box-shadow: var(--app-shadow-xl) !important;
 }
 
+// Alertas con mensaje de varias líneas: respetar los saltos de línea
+ion-alert.alert-multilinea .alert-message {
+  white-space: pre-line !important;
+}
+
 ion-alert.alert-editar-producto {
   .alert-message {
     white-space: pre-line !important;

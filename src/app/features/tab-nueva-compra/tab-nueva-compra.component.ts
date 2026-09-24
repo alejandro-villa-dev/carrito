@@ -10,14 +10,15 @@
  * @version 1.0
  */
 
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController, ToastController, LoadingController } from '@ionic/angular';
+import { ActionSheetController, AlertController, IonInput, ToastController, LoadingController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 
 // Importar servicios
 import { ComprasService } from '../../core/services/compras.service';
 import { UsuarioService } from '../../core/services/usuario.service';
+import { MonedaService } from '../../core/services/moneda.service';
 
 // Importar modelos existentes
 import { Producto, NuevoProducto, ActualizacionProducto } from '../../core/models/producto.model';
@@ -41,18 +42,21 @@ export class TabNuevaCompraComponent implements OnInit, OnDestroy {
 
   // Información de la compra
   infoCompra: {
-    fecha: string;
     nombreSupermercado: string;
   } = {
-    fecha: new Date().toISOString().split('T')[0],
     nombreSupermercado: ''
   };
 
+  // Lugares usados antes (atajo para no volver a escribirlos)
+  lugaresRecientes: string[] = [];
+
+  // Productos en orden inverso: el último agregado queda visible bajo el formulario
+  productosVista: Producto[] = [];
+
+  @ViewChild('inputNombre') inputNombre?: IonInput;
+
   // Presupuesto estimado para la compra
   presupuestoEstimado: number = 0;
-
-  // Fecha máxima (hoy)
-  fechaMaxima: string = new Date().toISOString().split('T')[0];
 
   // Formulario de nuevo producto
   nuevoProducto: Partial<NuevoProducto> = {
@@ -83,7 +87,9 @@ export class TabNuevaCompraComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private alertController: AlertController,
+    private actionSheetController: ActionSheetController,
     private toastController: ToastController,
+    private monedaService: MonedaService,
     private loadingController: LoadingController,
     private comprasService: ComprasService,
     private usuarioService: UsuarioService,
@@ -94,6 +100,7 @@ export class TabNuevaCompraComponent implements OnInit, OnDestroy {
     console.log('🛒 Inicializando tab nueva compra...');
     await this.verificarLimiteMensual();
     await this.cargarDatos();
+    await this.cargarLugaresRecientes();
   }
 
   ngOnDestroy(): void {
@@ -207,6 +214,38 @@ export class TabNuevaCompraComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Últimos lugares de compra distintos (más recientes primero)
+   */
+  private async cargarLugaresRecientes(): Promise<void> {
+    try {
+      const [completadas, borradores, guardadas] = await Promise.all([
+        this.comprasService.obtenerSesionesCompletadas(),
+        this.comprasService.obtenerSesionesBorrador(),
+        this.comprasService.obtenerSesionesGuardadas()
+      ]);
+
+      const vistos = new Set<string>();
+      this.lugaresRecientes = [...completadas, ...borradores, ...guardadas]
+        .sort((a, b) => new Date(b.fechaInicio).getTime() - new Date(a.fechaInicio).getTime())
+        .map(sesion => sesion.nombreSupermercado?.trim())
+        .filter((nombre): nombre is string => {
+          if (!nombre) return false;
+          const clave = nombre.toLowerCase();
+          if (vistos.has(clave)) return false;
+          vistos.add(clave);
+          return true;
+        })
+        .slice(0, 4);
+    } catch (error) {
+      console.error('Error al cargar lugares recientes:', error);
+    }
+  }
+
+  elegirLugar(lugar: string): void {
+    this.infoCompra.nombreSupermercado = lugar;
+  }
+
+  /**
    * Iniciar nueva compra (crear sesión)
    */
   async iniciarCompra(): Promise<void> {
@@ -225,7 +264,7 @@ export class TabNuevaCompraComponent implements OnInit, OnDestroy {
       // Crear nueva sesión con presupuesto opcional
       const nuevaSesion = await this.comprasService.crearNuevaSesion({
         nombreSupermercado: this.infoCompra.nombreSupermercado.trim(),
-        ubicacion: 'Chile', // Puedes expandir esto más adelante
+        ubicacion: this.monedaService.nombrePais,
         presupuestoEstimado: this.presupuestoEstimado > 0 ? this.presupuestoEstimado : undefined
       });
 
@@ -234,7 +273,7 @@ export class TabNuevaCompraComponent implements OnInit, OnDestroy {
 
         // Si hay presupuesto, mostrar mensaje informativo
         if (this.presupuestoEstimado > 0) {
-          await this.mostrarToast(`Compra iniciada con presupuesto de $${this.presupuestoEstimado}`, 'success');
+          await this.mostrarToast(`Compra iniciada · presupuesto ${this.monedaService.formatear(this.presupuestoEstimado)}`, 'success');
         } else {
           await this.mostrarToast('Compra iniciada exitosamente', 'success');
         }
@@ -257,23 +296,22 @@ export class TabNuevaCompraComponent implements OnInit, OnDestroy {
    */
   async cancelarNuevaCompra(): Promise<void> {
     const alert = await this.alertController.create({
-      header: '¿Cancelar Nueva Compra?',
-      message: 'Se descartarán todos los datos ingresados',
+      header: '¿Limpiar formulario?',
+      message: 'Se borrarán los datos que escribiste',
       buttons: [
         {
-          text: 'Seguir ingresando',
+          text: 'Seguir editando',
           role: 'cancel'
         },
         {
-          text: 'Cancelar compra',
+          text: 'Limpiar',
           role: 'destructive',
           handler: async () => {
             // Limpiar datos
             this.infoCompra.nombreSupermercado = '';
-            this.infoCompra.fecha = new Date().toISOString().split('T')[0];
             this.presupuestoEstimado = 0;
 
-            await this.mostrarToast('Compra cancelada', 'warning');
+            await this.mostrarToast('Formulario limpio', 'medium');
             console.log('❌ Creación de compra cancelada');
           }
         }
@@ -336,11 +374,11 @@ export class TabNuevaCompraComponent implements OnInit, OnDestroy {
         }
       }
 
-      // Limpiar formulario
+      // Limpiar formulario y dejar el cursor listo para el siguiente producto
       this.limpiarFormulario();
+      void this.inputNombre?.setFocus();
 
-      // Mostrar confirmación
-      await this.mostrarToast('Producto agregado', 'success');
+      await this.mostrarToast('Producto agregado', 'success', 1200);
       console.log('✅ Producto agregado correctamente');
     } else {
       await this.mostrarToast('Error al agregar producto', 'danger');
@@ -600,50 +638,37 @@ export class TabNuevaCompraComponent implements OnInit, OnDestroy {
    */
   private async mostrarOpcionesGuardado(hayProductosIncompletos: boolean): Promise<void> {
     const cantidadProductosIncompletos = this.productos.filter(p => !p.esCompleto).length;
-    const productosCompletos = this.productos.length - cantidadProductosIncompletos;
 
-    const presupuestoText = this.presupuestoEstimado > 0
-      ? `\n💰 Presupuesto: $${this.presupuestoEstimado.toLocaleString()}`
-      : '';
-
-    const message = `
-📍 RESUMEN DE TU COMPRA
-━━━━━━━━━━━━━━━━━━━━━
-🏪 Supermercado: ${this.sesionActiva?.nombreSupermercado || 'No especificado'}
-📦 Productos: ${this.productos.length}${presupuestoText}
-
-✨ BENEFICIOS DE GUARDAR AHORA
-━━━━━━━━━━━━━━━━━━━━━
-🛒 Completa los precios en la tienda
-💰 Controla tu gasto en tiempo real
-📌 No olvidas ningún producto
-⏱️ Ahorras tiempo en la compra
-
-💡 Consejo: Puedes editar cualquier producto desde aquí o luego, desde tu lista guardada.
-    `;
+    const lineas = [
+      `${this.sesionActiva?.nombreSupermercado || 'Tu compra'}`,
+      `${this.productos.length} ${this.productos.length === 1 ? 'producto' : 'productos'} · ${this.monedaService.formatear(this.totalGeneral)}`
+    ];
+    if (this.presupuestoEstimado > 0) {
+      lineas.push(`Presupuesto: ${this.monedaService.formatear(this.presupuestoEstimado)}`);
+    }
 
     const alert = await this.alertController.create({
-      header: '📋 Guardar lista',
+      header: 'Guardar lista',
       subHeader: hayProductosIncompletos
-        ? `${cantidadProductosIncompletos} artículo(s) sin precio · Se guardará como temporal`
-        : 'Todos los artículos están completos · Puedes finalizar o guardar temporalmente',
-      message: message.trim(),
-      cssClass: 'alert-guardar-incompleta',
+        ? `${cantidadProductosIncompletos} sin precio o cantidad: podrás completarlos en la tienda`
+        : 'Todo completo. Puedes finalizar la compra o guardarla para después',
+      message: lineas.join('\n'),
+      cssClass: 'alert-guardar-incompleta alert-multilinea',
       buttons: [
         {
-          text: '← Volver',
+          text: 'Volver',
           role: 'cancel',
           cssClass: 'btn-volver'
         },
         {
-          text: '📌 Guardar temporal',
+          text: 'Guardar para después',
           handler: async () => {
             await this.procesarGuardado(true);
           },
           cssClass: 'btn-guardar'
         },
         ...(!hayProductosIncompletos ? [{
-          text: '✓ Finalizar compra',
+          text: 'Finalizar compra',
           handler: async () => {
             await this.procesarGuardado(false);
           },
@@ -716,15 +741,15 @@ export class TabNuevaCompraComponent implements OnInit, OnDestroy {
     }
 
     const alert = await this.alertController.create({
-      header: '⚠️ Cancelar Compra en Progreso',
+      header: 'Descartar compra',
       message: `¿Deseas cancelar la compra en "${this.sesionActiva.nombreSupermercado}"? Se descartarán todos los ${this.productos.length} producto(s) agregado(s).`,
       buttons: [
         {
-          text: '← Volver',
+          text: 'Volver',
           role: 'cancel'
         },
         {
-          text: '🗑️ Cancelar Compra',
+          text: 'Descartar',
           role: 'destructive',
           handler: async () => {
             const loading = await this.loadingController.create({
@@ -775,15 +800,15 @@ export class TabNuevaCompraComponent implements OnInit, OnDestroy {
     }
 
     const alert = await this.alertController.create({
-      header: '🗑️ Eliminar Lista Guardada',
+      header: 'Eliminar lista',
       message: `¿Deseas eliminar permanentemente la lista de "${this.sesionActiva.nombreSupermercado}"? Esta acción no se puede deshacer.`,
       buttons: [
         {
-          text: '← Cancelar',
+          text: 'Cancelar',
           role: 'cancel'
         },
         {
-          text: '🗑️ Eliminar',
+          text: 'Eliminar',
           role: 'destructive',
           handler: async () => {
             const loading = await this.loadingController.create({
@@ -829,6 +854,7 @@ export class TabNuevaCompraComponent implements OnInit, OnDestroy {
    */
   private calcularTotal(): void {
     this.totalGeneral = this.productos.reduce((sum, p) => sum + p.total, 0);
+    this.productosVista = [...this.productos].reverse();
   }
 
   /**
@@ -886,16 +912,17 @@ export class TabNuevaCompraComponent implements OnInit, OnDestroy {
     const porcentajeUsado = (totalGastado / this.presupuestoEstimado) * 100;
 
     const alert = await this.alertController.create({
-      header: '⚠️ Presupuesto al 90%',
+      header: 'Presupuesto al 90%',
       message: `
 Has utilizado el 90% de tu presupuesto.
 
-Gasto actual: $${totalGastado}
-Presupuesto: $${this.presupuestoEstimado}
-Saldo disponible: $${diferencia}
+Gasto actual: ${this.monedaService.formatear(totalGastado)}
+Presupuesto: ${this.monedaService.formatear(this.presupuestoEstimado)}
+Saldo disponible: ${this.monedaService.formatear(diferencia)}
 
 Porcentaje usado: ${porcentajeUsado.toFixed(1)}%
       `,
+      cssClass: 'alert-multilinea',
       buttons: ['Entendido']
     });
 
@@ -913,16 +940,17 @@ Porcentaje usado: ${porcentajeUsado.toFixed(1)}%
     const porcentajeUsado = (totalGastado / this.presupuestoEstimado) * 100;
 
     const alert = await this.alertController.create({
-      header: '🔴 Presupuesto Excedido',
+      header: 'Presupuesto excedido',
       message: `
 ¡Has superado tu presupuesto!
 
-Gasto actual: $${totalGastado}
-Presupuesto: $${this.presupuestoEstimado}
-Excedido: $${excedido}
+Gasto actual: ${this.monedaService.formatear(totalGastado)}
+Presupuesto: ${this.monedaService.formatear(this.presupuestoEstimado)}
+Excedido: ${this.monedaService.formatear(excedido)}
 
 Porcentaje usado: ${porcentajeUsado.toFixed(1)}%
       `,
+      cssClass: 'alert-multilinea',
       buttons: ['Entendido']
     });
 
@@ -945,12 +973,13 @@ Porcentaje usado: ${porcentajeUsado.toFixed(1)}%
   /**
    * Mostrar toast
    */
-  private async mostrarToast(message: string, color: string = 'medium'): Promise<void> {
+  private async mostrarToast(message: string, color: string = 'medium', duracion: number = 2000): Promise<void> {
     const toast = await this.toastController.create({
       message,
-      duration: 2000,
+      duration: duracion,
       color,
-      position: 'bottom'
+      // Arriba para no tapar la barra de navegación ni el botón Guardar
+      position: 'top'
     });
     await toast.present();
   }
@@ -962,6 +991,64 @@ Porcentaje usado: ${porcentajeUsado.toFixed(1)}%
 
   get puedeAgregarProducto(): boolean {
     return this.productos.length < this.MAX_PRODUCTOS && this.puedeCrearNuevaLista && this.sesionActiva !== null;
+  }
+
+  get simbolo(): string {
+    return this.monedaService.simbolo;
+  }
+
+  get hayDatosFormulario(): boolean {
+    return this.infoCompra.nombreSupermercado.trim().length > 0 || this.presupuestoEstimado > 0;
+  }
+
+  get listasDisponibles(): number {
+    return Math.max(0, this.MAX_LISTAS_MES - this.listasCreadasEsteMes);
+  }
+
+  get subtotalNuevoProducto(): number {
+    return (Number(this.nuevoProducto.cantidad) || 0) * (Number(this.nuevoProducto.precioUnitario) || 0);
+  }
+
+  get presupuestoExcedido(): boolean {
+    return this.obtenerDiferenciaPresupuesto() < 0;
+  }
+
+  get saldoPresupuestoAbsoluto(): number {
+    return Math.abs(this.obtenerDiferenciaPresupuesto());
+  }
+
+  get porcentajeBarraPresupuesto(): number {
+    return Math.min(100, this.obtenerPorcentajePresupuesto());
+  }
+
+  /**
+   * Convierte lo que emite un ion-input numérico ('' | string | number) a número
+   */
+  aNumero(valor: unknown): number {
+    const numero = Number(valor);
+    return isFinite(numero) && numero > 0 ? numero : 0;
+  }
+
+  /**
+   * Menú de la compra en curso: la acción destructiva queda fuera del camino
+   */
+  async abrirMenuSesion(): Promise<void> {
+    const menu = await this.actionSheetController.create({
+      header: this.sesionActiva?.nombreSupermercado,
+      buttons: [
+        {
+          text: 'Eliminar lista',
+          icon: 'trash-outline',
+          role: 'destructive',
+          handler: () => { void this.eliminarListaSesionActiva(); }
+        },
+        {
+          text: 'Cerrar',
+          role: 'cancel'
+        }
+      ]
+    });
+    await menu.present();
   }
 
   get mensajeLimite(): string {

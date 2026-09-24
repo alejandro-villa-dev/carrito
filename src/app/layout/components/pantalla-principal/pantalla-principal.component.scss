@@ -1,9 +1,9 @@
 /**
- * Estilos Pantalla Principal - Diseño moderno optimizado móvil
- * Tema: Compras/Carrito con gradientes y animaciones sutiles
+ * Estilos Pantalla Principal - Encabezado compacto
+ * Usa solo variables de tema (--ion-color-*, --app-*), no colores fijos.
  *
  * @author DemWolf
- * @version 3.0 - UX/UI Optimizado
+ * @version 4.0 - REDISEÑO SIMPLIFICADO
  */
 
 .pantalla-principal {
@@ -12,15 +12,6 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-
-  // Asegurar diseño móvil responsivo
-  @media (max-width: 768px) {
-    font-size: 14px;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 13px;
-  }
 
   .loading-container {
     height: 100%;
@@ -51,6 +42,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    height: 100%;
   }
 
   .ad-banner-top {
@@ -68,14 +60,10 @@
 
   .hero-section {
     position: relative;
-    height: 200px;
+    min-height: 200px;
     overflow: hidden;
     flex-shrink: 0;
 
-    // Ajuste responsivo móvil
-    @media (max-width: 480px) {
-      height: 180px;
-    }
 
     .hero-background {
       position: absolute;
@@ -147,7 +135,6 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
-      height: 100%;
 
       // Responsive móvil
       @media (max-width: 480px) {
@@ -296,81 +283,85 @@
     display: flex;
     flex-direction: column;
     position: relative;
-    padding-bottom: calc(95px + env(safe-area-inset-bottom)); // Espacio para los tabs fijos + respeto a barra de Android
-
-    // Smooth scroll para mejor UX
+    // Alto de la barra inferior fija (68px) + barra de gestos de Android
+    padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px) * 1.5);
     -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
   }
 
-  // Wrapper para tabs fijos como footer (UX/UI)
-  .tab-bar-wrapper {
-    display: none;
-  }
-
-  .semicircle-tab-bar {
-    display: none;
-  }
-
+  // Burbuja de donación compacta: una franja sobre la barra, no una tarjeta que tape el contenido
   .burbuja-donacion {
     position: fixed;
-    bottom: 80px;
+    bottom: calc(76px + env(safe-area-inset-bottom, 0px) * 1.5);
+    left: 16px;
     right: 16px;
     z-index: 9999;
     background: var(--ion-card-background);
-    border-radius: 20px;
-    padding: 16px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    max-width: 280px;
-    border: 1px solid var(--ion-border-color, rgba(0, 0, 0, 0.1));
+    border-radius: 16px;
+    padding: 10px 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
+    border: 1px solid var(--app-border-color);
 
     .btn-cerrar {
       position: absolute;
-      top: 4px;
-      right: 4px;
-      --color: var(--ion-color-medium);
+      top: -14px;
+      right: -6px;
+      width: 28px;
+      height: 28px;
+      --padding-start: 0 !important;
+      --padding-end: 0 !important;
+      --color: var(--app-text-secondary) !important;
+      --background: var(--ion-card-background) !important;
+      --border-radius: 50% !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      border-radius: 50%;
     }
 
     .burbuja-content {
-      text-align: center;
-      padding-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
 
       ion-icon[name="heart"] {
-        font-size: 48px;
-        margin-bottom: 12px;
+        flex-shrink: 0;
+        font-size: 28px;
         color: var(--ion-color-danger);
       }
 
+      .burbuja-texto {
+        flex: 1;
+        min-width: 0;
+      }
+
       h4 {
-        margin: 0 0 8px 0;
-        font-size: 18px;
+        margin: 0;
+        font-size: 14px;
         font-weight: 700;
         color: var(--ion-text-color);
       }
 
       p {
-        margin: 0 0 16px 0;
-        font-size: 14px;
-        color: var(--ion-color-medium);
+        margin: 1px 0 0;
+        font-size: 12px;
+        color: var(--app-text-secondary);
       }
 
       ion-button {
-        --color: var(--ion-color-danger);
-        --text-color: white;
+        flex-shrink: 0;
+        margin: 0;
       }
     }
   }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(0.95); }
 }
 
 @keyframes gradientShift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(0.95); }
 }
 
 @keyframes float {
@@ -385,5 +376,59 @@
   }
   75% {
     transform: translateY(-30px) translateX(5px);
+  }
+}
+
+// Textos del encabezado: los temas de accesibilidad recolorean h1/p con !important y dejaban
+// el saludo ilegible sobre el degradado. Aquí se fija el contraste en todos los temas.
+.pantalla-principal .hero-section {
+  .user-name,
+  .tagline,
+  .motivational-message p {
+    color: #ffffff !important;
+  }
+
+  // Fondo más oscuro tras las frases: el blanco translúcido restaba contraste al texto
+  .motivational-message {
+    background: rgba(0, 0, 0, 0.28) !important;
+  }
+}
+
+// Alto contraste: encabezado negro con texto amarillo, sin degradado ni adornos
+:host-context(body.theme-high-contrast) .pantalla-principal {
+  .ad-banner-top {
+    background: #000000 !important;
+
+    ion-chip {
+      --background: #000000 !important;
+      --color: #ffff00 !important;
+      border: 2px solid #ffff00;
+    }
+  }
+
+  .hero-section {
+    background: #000000;
+
+    .gradient-overlay {
+      background: #000000 !important;
+      animation: none !important;
+    }
+
+    .cart-icons,
+    .pattern-overlay {
+      display: none;
+    }
+
+    .user-name,
+    .tagline,
+    .motivational-message p {
+      color: #ffff00 !important;
+      text-shadow: none !important;
+    }
+
+    .motivational-message {
+      background: #000000 !important;
+      border: 2px solid #ffff00;
+    }
   }
 }
