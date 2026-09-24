@@ -75,7 +75,7 @@ export class BienvenidaComponent implements OnInit, OnDestroy, AfterViewInit {
   // Información de la aplicación para el splash
   infoApp = {
     nombre: 'CarritoControl',
-    version: '1.0',
+    version: '1.1.0',
     descripcion: 'Tus compras bajo control',
     caracteristicas: [
       {

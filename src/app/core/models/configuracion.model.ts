@@ -101,7 +101,7 @@ export interface ConfiguracionMantenimiento {
 
 // Configuración inicial por defecto para nueva instalación
 export const CONFIGURACION_INICIAL: ConfiguracionApp = {
-  version: '1.0.0',
+  version: '1.1.0',
   versionDatos: '1.0.0',
   primerInicio: true,
   fechaInstalacion: new Date(),

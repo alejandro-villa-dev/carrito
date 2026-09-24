@@ -272,7 +272,7 @@ Al usar esta aplicación, aceptas estos términos.`,
       message: `🛒 CarritoControl - Tus compras bajo control
 
 📱 INFORMACIÓN DE LA APP:
-Versión: 1.0.0
+Versión: 1.1.0
 Desarrollado por: DemWolf 🇨🇱
 Plataforma: Android
 
