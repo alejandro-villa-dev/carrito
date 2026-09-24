@@ -18,9 +18,9 @@ Aplicación móvil para Android creada para **organizar lo que necesitas comprar
 
 ## 📲 Probar CarritoControl
 
-La versión actual está disponible como APK para dispositivos Android.
+La versión actual (**v1.1.0**, actualizada el 24-09-2026) está disponible como APK para dispositivos Android.
 
-[![Descargar APK](https://img.shields.io/badge/⬇️_DESCARGAR-CARRITOCONTROL_APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/DemWolfXZ/carrito/raw/refs/heads/main/Carrito%20Control.apk)
+[![Descargar APK](https://img.shields.io/badge/⬇️_DESCARGAR-CARRITOCONTROL_APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/DemWolfXZ/carrito/raw/refs/heads/main/CarritoControl%20v1.1.0.apk)
 
 </div>
 
@@ -455,6 +455,16 @@ Listas cuyo periodo temporal terminó.
 
 Compras que fueron completadas correctamente.
 
+## 🔎 Búsqueda y resumen del mes
+
+Desde la versión 1.1.0 el historial incluye:
+
+- Un buscador que filtra las compras por lugar o por nombre de producto.
+- Un resumen del mes en curso con la cantidad de compras realizadas y el total gastado.
+- Fechas mostradas según el formato del país del usuario.
+
+Además, una lista en progreso se abre directamente con un toque para continuar completándola, sin pasos intermedios.
+
 ---
 
 # 📊 Estadísticas de compra
@@ -507,6 +517,19 @@ Por ejemplo:
 Moneda:  CLP
 Símbolo: $
 ```
+
+Desde la versión 1.1.0, todos los montos de la aplicación se muestran con el formato del país seleccionado: separador de miles, separador decimal, símbolo y cantidad de decimales de su moneda.
+
+```text
+🇨🇱 Chile     $12.500       (sin decimales)
+🇲🇽 México    $12,500.75
+🇵🇪 Perú      S/ 12,500.75
+🇪🇸 España    €12.500,75
+```
+
+Los decimales solo se muestran cuando el monto los tiene.
+
+Si el usuario cambia de país en Ajustes, los montos visibles se actualizan de inmediato.
 
 ---
 
@@ -984,9 +1007,9 @@ La versión actual puede probarse directamente en Android.
 
 <div align="center">
 
-## CarritoControl v1.0.0
+## CarritoControl v1.1.0
 
-[![Descargar APK](https://img.shields.io/badge/⬇️_DESCARGAR-APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/DemWolfXZ/carrito/raw/refs/heads/main/Carrito%20Control.apk)
+[![Descargar APK](https://img.shields.io/badge/⬇️_DESCARGAR-APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/DemWolfXZ/carrito/raw/refs/heads/main/CarritoControl%20v1.1.0.apk)
 
 </div>
 
@@ -1049,9 +1072,53 @@ Entre los conceptos aplicados se encuentran:
 
 ---
 
+# 🆕 Novedades
+
+## v1.1.0 · 24-09-2026
+
+Actualización visual de la aplicación, con mejoras de uso en cada pantalla.
+
+### 🎨 Nuevo diseño
+
+- Rediseño de las pantallas de Nueva compra, Historial y Ajustes.
+- Encabezado renovado con saludo y avatar con la inicial del usuario.
+- Barra inferior rediseñada: el botón central queda integrado a la barra.
+- Mensajes y confirmaciones más cortos y claros.
+
+### 🛒 Nueva compra
+
+- Atajos con los últimos lugares de compra para no volver a escribirlos.
+- Subtotal visible mientras se ingresa un producto.
+- Al agregar un producto, el cursor queda listo para escribir el siguiente.
+- El último producto agregado aparece primero en la lista.
+- La opción de eliminar la lista pasa a un menú, para evitar borrarla por error.
+- Los avisos aparecen en la parte superior, sin tapar la barra ni el botón Guardar.
+
+### 🧭 Navegación
+
+- Con una compra en curso, el botón central cambia a un carrito con el número de productos ("Mi compra").
+- La barra inferior siempre resalta la pantalla en la que se encuentra el usuario.
+
+### 📜 Historial
+
+- Buscador por lugar o producto.
+- Resumen del mes: compras realizadas y total gastado.
+- Las listas en progreso se abren directamente con un toque.
+
+### 🌎 Moneda según el país
+
+- Todos los montos y fechas se muestran con el formato del país elegido.
+- Al cambiar de país, los montos se actualizan de inmediato.
+
+## v1.0.0 · 04-09-2026
+
+Primera versión publicada como APK.
+
+---
+
 # 🚧 Estado actual
 
-**CarritoControl v1.0.0**
+**CarritoControl v1.1.0**
 
 La aplicación se encuentra funcional y continúa en desarrollo y mejora.
 
@@ -1110,7 +1177,7 @@ https://github.com/DemWolfXZ/carrito
 
 <br>
 
-[![Descargar CarritoControl](https://img.shields.io/badge/Descargar-CarritoControl_APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/DemWolfXZ/carrito/raw/refs/heads/main/Carrito%20Control.apk)
+[![Descargar CarritoControl](https://img.shields.io/badge/Descargar-CarritoControl_APK-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://github.com/DemWolfXZ/carrito/raw/refs/heads/main/CarritoControl%20v1.1.0.apk)
 
 <br>
 
